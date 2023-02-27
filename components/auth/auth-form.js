@@ -1,24 +1,61 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import classes from './auth-form.module.css';
 
 function AuthForm() {
   const [isLogin, setIsLogin] = useState(true);
 
+  const emailRef = useRef('');
+  const passwordRef = useRef('');
+
   function switchAuthModeHandler() {
     setIsLogin((prevState) => !prevState);
   }
 
+  async function createUser(email, password) {
+    const result = await fetch('/api/signup', {
+      method: 'POST',
+      body: JSON.stringify({ email: email, password: password }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+
+    const data = result.json();
+
+    if (data.message !== 'ok') {
+      console.log(data.message || 'Something went wrong')
+    }
+
+    return data;
+  }
+  async function sendingDataHandler(e) {
+    e.preventDefault();
+    let email = emailRef.current.value;
+    let password = passwordRef.current.value;
+
+    if (isLogin) {
+      //write function for login
+    } else {
+      try {
+        const result = await createUser(email, password)
+        return result;
+      } catch (err) {
+        console.log(err)
+      }
+
+    }
+  }
   return (
     <section className={classes.auth}>
       <h1>{isLogin ? 'Login' : 'Sign Up'}</h1>
-      <form>
+      <form onSubmit={sendingDataHandler}>
         <div className={classes.control}>
           <label htmlFor='email'>Your Email</label>
-          <input type='email' id='email' required />
+          <input type='email' id='email' required ref={emailRef} />
         </div>
         <div className={classes.control}>
           <label htmlFor='password'>Your Password</label>
-          <input type='password' id='password' required />
+          <input type='password' id='password' required ref={passwordRef} />
         </div>
         <div className={classes.actions}>
           <button>{isLogin ? 'Login' : 'Create Account'}</button>
