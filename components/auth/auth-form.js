@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react';
+import { signIn } from "next-auth/react"
 import classes from './auth-form.module.css';
 
 function AuthForm() {
@@ -12,7 +13,7 @@ function AuthForm() {
   }
 
   async function createUser(email, password) {
-    const result = await fetch('/api/signup', {
+    const result = await fetch('/api/auth/signup', {
       method: 'POST',
       body: JSON.stringify({ email: email, password: password }),
       headers: {
@@ -35,6 +36,12 @@ function AuthForm() {
 
     if (isLogin) {
       //write function for login
+      const result = await signIn('credentials', {
+        redirect: false,
+        email: email,
+        password: password
+      })
+      console.log('result', result)
     } else {
       try {
         const result = await createUser(email, password)
