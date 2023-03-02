@@ -1,9 +1,12 @@
 import { useRef, useState } from 'react';
 import { signIn } from "next-auth/react"
 import classes from './auth-form.module.css';
+import { useRouter } from "next/router"
 
 function AuthForm() {
   const [isLogin, setIsLogin] = useState(true);
+
+  const router = useRouter();
 
   const emailRef = useRef('');
   const passwordRef = useRef('');
@@ -23,28 +26,32 @@ function AuthForm() {
 
     const data = result.json();
 
-    if (data.message !== 'ok') {
-      console.log(data.message || 'Something went wrong')
+    if (!response.ok) {
+      throw new Error(data.message || 'Something went wrong')
     }
 
     return data;
   }
   async function sendingDataHandler(e) {
     e.preventDefault();
-    let email = emailRef.current.value;
-    let password = passwordRef.current.value;
+    let enteredEmail = emailRef.current.value;
+    let enteredPassword = passwordRef.current.value;
 
     if (isLogin) {
       //write function for login
       const result = await signIn('credentials', {
         redirect: false,
-        email: email,
-        password: password
-      })
-      console.log('result', result)
+        email: enteredEmail,
+        password: enteredPassword
+      });
+
+      if (!result.error) {
+        router.replace('/profile')
+      }
+
     } else {
       try {
-        const result = await createUser(email, password)
+        const result = await createUser(enteredEmail, enteredPassword)
         return result;
       } catch (err) {
         console.log(err)
