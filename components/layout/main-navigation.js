@@ -5,7 +5,7 @@ import classes from './main-navigation.module.css';
 
 function MainNavigation() {
 
-  const { data: session, status } = useSession()
+  const { data: session, status } = useSession();
 
   console.log('status', status);
   console.log('session', session);

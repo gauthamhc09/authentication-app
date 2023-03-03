@@ -3,6 +3,24 @@ import { signIn } from "next-auth/react"
 import classes from './auth-form.module.css';
 import { useRouter } from "next/router"
 
+async function createUser(email, password) {
+  const response = await fetch('/api/auth/signup', {
+    method: 'POST',
+    body: JSON.stringify({ email: email, password: password }),
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+
+  const data = response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || 'Something went wrong')
+  }
+
+  return data;
+}
+
 function AuthForm() {
   const [isLogin, setIsLogin] = useState(true);
 
@@ -15,23 +33,7 @@ function AuthForm() {
     setIsLogin((prevState) => !prevState);
   }
 
-  async function createUser(email, password) {
-    const result = await fetch('/api/auth/signup', {
-      method: 'POST',
-      body: JSON.stringify({ email: email, password: password }),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
 
-    const data = result.json();
-
-    if (!response.ok) {
-      throw new Error(data.message || 'Something went wrong')
-    }
-
-    return data;
-  }
   async function sendingDataHandler(e) {
     e.preventDefault();
     let enteredEmail = emailRef.current.value;

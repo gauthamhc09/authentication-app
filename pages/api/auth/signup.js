@@ -10,10 +10,10 @@ async function handler(req, res) {
         //     return;
         // }
 
-        const db = await ConnectDatabase();
-
+        const client = await ConnectDatabase();        
+        const db = client.db('auth-demo');
         const existingUser = await db.collection('users').findOne({ email: email });
-
+        
         if (existingUser !== null) {
             res.status(422).json({ message: 'This user already found in the db' });
             client.close();

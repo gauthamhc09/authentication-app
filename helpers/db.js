@@ -4,6 +4,5 @@ const clientAddress = MongoClient.connect('mongodb+srv://auth-user:ffQTKDf4XIiHy
 
 export async function ConnectDatabase() {
     const client = await clientAddress;
-    const dataBase = client.db('auth-demo');
-    return dataBase;
+    return client;
 }

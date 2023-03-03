@@ -12,9 +12,10 @@ export default NextAuth({
             async authorize(credentials) {
                 const client = await ConnectDatabase();
 
-                const userCollections = client.collection('users');
-
+                const db = client.db('auth-demo');
+                const userCollections = db.collection('users');
                 const user = await userCollections.findOne({ email: credentials.email });
+                
 
                 if (!user) {
                     client.close();
@@ -30,7 +31,7 @@ export default NextAuth({
                 }
 
                 // client.close();
-                return user.email;
+                return { email: user.email };
 
             }
         })
